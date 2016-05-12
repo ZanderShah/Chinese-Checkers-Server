@@ -31,7 +31,6 @@ public class Display extends JPanel{
 	{
 		
 		//Initialize left shift
-		
 		double left = 0;
 		for(int i = 0; i < 17; i++)
 		{
@@ -39,7 +38,7 @@ public class Display extends JPanel{
 			{
 				// 0 = empty position
 				if(board[i][j] == 0)
-					g.setColor(Color.BLACK);
+					g.setColor(Color.LIGHT_GRAY);
 				// 1-6 player positions
 				else if(board[i][j] == 1)
 					g.setColor(Color.RED);
@@ -56,7 +55,7 @@ public class Display extends JPanel{
 				// -1 = invalid position
 				else
 					g.setColor(Color.WHITE);
-				g.drawOval((int)((j*SPACE)-left+SIZE.width/2 - 4.5*SPACE), i*SPACE + SIZE.height/10, DIAMETER, DIAMETER);
+				g.fillOval((int)((j*SPACE)-left+SIZE.width/2 - 4.5*SPACE), i*SPACE + SIZE.height/10, DIAMETER, DIAMETER);
 			}
 			left += SPACE/Math.sqrt(3)-2;
 		}
@@ -77,6 +76,8 @@ public class Display extends JPanel{
 		frame.setMinimumSize(SIZE);
 		Display d = new Display();
 		d.go();
+		
+		
 		board = new int[17][17];
 		for(int i = 0; i < 17; i++)
 		{
@@ -85,6 +86,8 @@ public class Display extends JPanel{
 				board[i][j] = -1;
 			}
 		}
+		
+		
 		for(int i = 4; i <= 12; i++)
 		{
 			for(int j = 4; j <= 12; j++)
