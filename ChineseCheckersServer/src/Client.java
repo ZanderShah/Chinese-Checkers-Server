@@ -77,7 +77,6 @@ public class Client
 	 */
 	public int[][] getMove()
 	{
-		System.out.println("here");
 		try
 		{
 			out.write(4);
@@ -87,9 +86,12 @@ public class Client
 		{
 			e.printStackTrace();
 		}
+		
 		MoveThread m = new MoveThread(is);
 		Thread t = new Thread(m);
+		
 		t.start();
+		
 		try
 		{
 			Thread.sleep(2000);
@@ -98,6 +100,8 @@ public class Client
 		{
 			e.printStackTrace();
 		}
+		
+		
 		if (!m.timeout())
 		{
 			try
@@ -110,6 +114,7 @@ public class Client
 				e.printStackTrace();
 			}
 		}
+		
 		return m.getMove();
 	}
 }
@@ -117,14 +122,13 @@ public class Client
 /**
  * Thread for receiving a move from the client. Can be timed out if the player
  * takes too long.
- *
  */
 class MoveThread implements Runnable
 {
 	private boolean timeout = false;
 	private int[][] move;
 	private boolean moveReceived = false;
-	InputStream in;
+	private InputStream in;
 
 	public MoveThread(InputStream in)
 	{

@@ -30,7 +30,7 @@ public class Display extends JPanel
 		fillTriangle(1, board, 4, 0, 4);
 		fillTriangle(-1, board, 5, 7, 3);
 		fillTriangle(1, board, 6, 9, 4);
-		
+
 		frame = new JFrame();
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -47,7 +47,7 @@ public class Display extends JPanel
 	{
 		this.board = board;
 	}
-	
+
 	public int[][] getBoard()
 	{
 		return board;
@@ -57,8 +57,7 @@ public class Display extends JPanel
 	{
 		// Initialize left shift
 		double left = 0;
-		for (int i = 0; i < 17; i++)
-		{
+		for (int i = 0; i < 17; i++, left += SPACE / Math.sqrt(3) - 2)
 			for (int j = 0; j < 17; j++)
 			{
 				// 0 = empty position
@@ -84,8 +83,6 @@ public class Display extends JPanel
 						(int) ((j * SPACE) - left + SIZE.width / 2 - 4.5 * SPACE),
 						i * SPACE + SIZE.height / 10, DIAMETER, DIAMETER);
 			}
-			left += SPACE / Math.sqrt(3) - 2;
-		}
 	}
 
 	public static void fillTriangle(int attitude, int[][] board, int player,

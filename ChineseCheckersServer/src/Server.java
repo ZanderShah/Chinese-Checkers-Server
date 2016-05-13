@@ -9,7 +9,7 @@ public class Server extends JPanel
 	private ServerSocket serverSocket;
 	private ArrayList<Thread> threads;
 	private ArrayList<Client> clients;
-	private static boolean gameOver;
+	private static boolean gameOver, gameStarted;
 	private int turn, board[][];
 	private static Display display;
 
@@ -34,7 +34,7 @@ public class Server extends JPanel
 		{
 			serverSocket = new ServerSocket(1337);
 
-			while (playersConnected != 6)
+			while (playersConnected != 1)
 			{
 				client = serverSocket.accept();
 				playersConnected++;
@@ -52,6 +52,16 @@ public class Server extends JPanel
 		}
 
 		System.out.println("All clients connected :)");
+		
+		for (int i = 0; i < playersConnected; i++)
+			whisper(String.format("2 %d", i + 1), i);
+		
+		for (int i = 0; i < board.length; i++)
+			for (int j = 0; j < board[0].length; j++)
+				if (board[i][j] != 0 && board[i][j] != -1)
+					shout(String.format("3 %d %d %d", board[i][j], i, j));
+		
+		gameStarted = true;
 	}
 
 	public void shout(String message)
@@ -84,17 +94,17 @@ public class Server extends JPanel
 		public void run()
 		{
 			while (!gameOver)
-			{
+			{		
 				try
 				{
-					if (turn == colour)
+					if (turn == colour && gameStarted)
 					{
 						client.getOut().println(4);
 						client.getOut().flush();
 
 						int[][] move = client.getMove();
 						System.out.println(move[0][0] + " " + move[0][1]);
-	
+
 						turn = (turn + 1) % 6;
 					}
 				}
