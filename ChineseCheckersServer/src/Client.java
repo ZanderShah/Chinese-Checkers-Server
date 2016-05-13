@@ -9,7 +9,6 @@ import java.util.Arrays;
 
 public class Client
 {
-
 	private Socket sock;
 	private BufferedReader in;
 	private PrintWriter out;

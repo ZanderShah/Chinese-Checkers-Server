@@ -66,22 +66,24 @@ public class Server
 	{
 		return gameStillRunning;
 	}
-}
-
-class Player implements Runnable
-{
-	private Client client;
-	private int colour;
-
-	Player(Client client)
-	{
-		this.client = client;
-		colour = client.getColour();
-	}
-
-	@Override
-	public void run()
-	{
 	
+	static class Player implements Runnable
+	{
+		private Client client;
+		private int colour;
+
+		Player(Client client)
+		{
+			this.client = client;
+			colour = client.getColour();
+		}
+
+		@Override
+		public void run()
+		{
+		
+		}
 	}
+
 }
+
