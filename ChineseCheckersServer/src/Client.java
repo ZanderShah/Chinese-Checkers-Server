@@ -77,11 +77,11 @@ public class Client
 	 */
 	public int[][] getMove()
 	{
+		System.out.println("here");
 		try
 		{
 			out.write(4);
 			out.flush();
-
 		}
 		catch (Exception e)
 		{
@@ -138,10 +138,8 @@ class MoveThread implements Runnable
 	{
 		try
 		{
-			while (in.available() < 5 && !timeout)
-			{
-			}
-			;
+			while (in.available() < 5 && !timeout){};
+			
 			if (!timeout)
 			{
 				int command = in.read();

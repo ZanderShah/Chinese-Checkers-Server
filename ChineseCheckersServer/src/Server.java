@@ -2,15 +2,21 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class Server
+import javax.swing.JPanel;
+
+public class Server extends JPanel
 {
 	private ServerSocket serverSocket;
 	private ArrayList<Thread> threads;
 	private ArrayList<Client> clients;
-	private boolean gameStillRunning;
+	private static boolean gameOver;
+	private int turn, board[][];
+	private static Display display;
 
 	public static void main(String[] args)
 	{
+		display = new Display();
+		display.go();
 		new Server().go();
 	}
 
@@ -19,8 +25,10 @@ public class Server
 		System.out.println("Waiting for player connections..");
 		Socket client = null;
 		int playersConnected = 0;
+		turn = 1;
 		threads = new ArrayList<Thread>();
 		clients = new ArrayList<Client>();
+		board = display.getBoard();
 
 		try
 		{
@@ -30,9 +38,9 @@ public class Server
 			{
 				client = serverSocket.accept();
 				playersConnected++;
-				System.out.printf("Client #%d connected!", playersConnected);
+				System.out.printf("Client #%d connected!%n", playersConnected);
 				clients.add(new Client(client, playersConnected));
-				threads.add(new Thread(new Player(
+				threads.add(new Thread(new PlayerThread(
 						clients.get(clients.size() - 1))));
 				threads.get(threads.size() - 1).start();
 			}
@@ -43,7 +51,6 @@ public class Server
 			e.printStackTrace();
 		}
 
-		gameStillRunning = true;
 		System.out.println("All clients connected :)");
 	}
 
@@ -61,18 +68,13 @@ public class Server
 		clients.get(recipient).getOut().println(message);
 		clients.get(recipient).getOut().flush();
 	}
-	
-	public boolean isGame()
-	{
-		return gameStillRunning;
-	}
-	
-	static class Player implements Runnable
+
+	class PlayerThread implements Runnable
 	{
 		private Client client;
 		private int colour;
 
-		Player(Client client)
+		PlayerThread(Client client)
 		{
 			this.client = client;
 			colour = client.getColour();
@@ -81,9 +83,26 @@ public class Server
 		@Override
 		public void run()
 		{
-		
+			while (!gameOver)
+			{
+				try
+				{
+					if (turn == colour)
+					{
+						client.getOut().println(4);
+						client.getOut().flush();
+
+						int[][] move = client.getMove();
+						System.out.println(move[0][0] + " " + move[0][1]);
+	
+						turn = (turn + 1) % 6;
+					}
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
 		}
 	}
-
 }
-

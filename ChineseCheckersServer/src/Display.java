@@ -7,20 +7,54 @@ import javax.swing.JPanel;
 
 public class Display extends JPanel
 {
-	static JFrame frame;
+	private JFrame frame;
 	static int[][] board;
-	static final Dimension SIZE = new Dimension(900, 800);
-	static final int SPACE = 32;
-	static final int DIAMETER = 30;
+	private final Dimension SIZE = new Dimension(900, 800);
+	private final int SPACE = 32;
+	private final int DIAMETER = 30;
 
 	public void go()
 	{
+		board = new int[17][17];
+		for (int i = 0; i < 17; i++)
+			for (int j = 0; j < 17; j++)
+				board[i][j] = -1;
+
+		for (int i = 4; i <= 12; i++)
+			for (int j = 4; j <= 12; j++)
+				board[i][j] = 0;
+
+		fillTriangle(-1, board, 1, 16, 12);
+		fillTriangle(1, board, 2, 9, 13);
+		fillTriangle(-1, board, 3, 7, 12);
+		fillTriangle(1, board, 4, 0, 4);
+		fillTriangle(-1, board, 5, 7, 3);
+		fillTriangle(1, board, 6, 9, 4);
 		
+		frame = new JFrame();
+		frame.setResizable(false);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setMinimumSize(SIZE);
+		Display d = new Display();
+
+		frame.getContentPane().add(d);
+		frame.setBackground(Color.WHITE);
+		frame.pack();
+		frame.setVisible(true);
+	}
+
+	public void updateBoard(int[][] board)
+	{
+		this.board = board;
+	}
+	
+	public int[][] getBoard()
+	{
+		return board;
 	}
 
 	public void paintComponent(Graphics g)
 	{
-
 		// Initialize left shift
 		double left = 0;
 		for (int i = 0; i < 17; i++)
@@ -65,34 +99,6 @@ public class Display extends JPanel
 
 	public static void main(String[] args)
 	{
-		frame = new JFrame();
-		frame.setResizable(false);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setMinimumSize(SIZE);
-		Display d = new Display();
-		d.go();
-
-		board = new int[17][17];
-		for (int i = 0; i < 17; i++)
-			for (int j = 0; j < 17; j++)
-				board[i][j] = -1;
-
-
-		for (int i = 4; i <= 12; i++)
-			for (int j = 4; j <= 12; j++)
-				board[i][j] = 0;
-
-		fillTriangle(-1, board, 1, 16, 12);
-		fillTriangle(1, board, 2, 9, 13);
-		fillTriangle(-1, board, 3, 7, 12);
-		fillTriangle(1, board, 4, 0, 4);
-		fillTriangle(-1, board, 5, 7, 3);
-		fillTriangle(1, board, 6, 9, 4);
-
-		frame.getContentPane().add(d);
-		frame.setBackground(Color.WHITE);
-		frame.pack();
-		frame.setVisible(true);
-
+		new Display().go();
 	}
 }
