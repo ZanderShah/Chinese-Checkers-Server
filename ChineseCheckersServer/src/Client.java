@@ -1,46 +1,29 @@
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Arrays;
 
 public class Client
 {
 	private Socket sock;
-	private BufferedReader in;
-	private PrintWriter out;
+	private InputStream in;
+	private OutputStream out;
 	private int colour;
-	private InputStream is;
 
 	public Client(Socket socket, int colour)
 	{
 		try
 		{
-			in = new BufferedReader(new InputStreamReader(
-					socket.getInputStream()));
-			out = new PrintWriter(socket.getOutputStream());
 			sock = socket;
-			is = socket.getInputStream();
+			in = sock.getInputStream();
+			out = sock.getOutputStream();
 			this.colour = colour;
 		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
 		}
-
-	}
-
-	public BufferedReader getIn()
-	{
-		return in;
-	}
-
-	public PrintWriter getOut()
-	{
-		return out;
 	}
 
 	public int getColour()
@@ -79,6 +62,7 @@ public class Client
 	{
 		try
 		{
+			System.out.printf("Player %d queried for move%n", colour);
 			out.write(4);
 			out.flush();
 		}
@@ -87,7 +71,7 @@ public class Client
 			e.printStackTrace();
 		}
 		
-		MoveThread m = new MoveThread(is);
+		MoveThread m = new MoveThread(in, colour);
 		Thread t = new Thread(m);
 		
 		t.start();
@@ -100,12 +84,15 @@ public class Client
 		{
 			e.printStackTrace();
 		}
+		m.timeout();
 		
+		int[][] move = m.getMove();
 		
-		if (!m.timeout())
+		if (move == null)
 		{
 			try
 			{
+				System.out.printf("Player %d timed out while choosing a move%n", colour);
 				out.write(6);
 				out.flush();
 			}
@@ -115,7 +102,26 @@ public class Client
 			}
 		}
 		
-		return m.getMove();
+		return move;
+	}
+
+	public void invalidMove() {
+		try {
+			out.write(5);
+			out.flush();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void sendCommand(byte[] command) {
+		try {
+			out.write(command, 0, command.length);
+			out.flush();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
 
@@ -129,11 +135,13 @@ class MoveThread implements Runnable
 	private int[][] move;
 	private boolean moveReceived = false;
 	private InputStream in;
+	int colour;
 
-	public MoveThread(InputStream in)
+	public MoveThread(InputStream in, int c)
 	{
 		move = new int[2][2];
 		this.in = in;
+		colour = c;
 		Arrays.fill(move, new int[] { -1, -1 });
 	}
 
@@ -154,6 +162,7 @@ class MoveThread implements Runnable
 					move[1][0] = in.read();
 					move[1][1] = in.read();
 					moveReceived = true;
+					System.out.printf("Move recieved from player %d: [%d %d] -> [%d %d]%n", colour, move[0][0], move[0][1], move[1][0], move[1][1]);
 				}
 			}
 		}
@@ -171,7 +180,11 @@ class MoveThread implements Runnable
 
 	public int[][] getMove()
 	{
-		return move;
+		if (moveReceived) {
+			return move;
+		} else {
+			return null;
+		}
 	}
 
 	public void sendMove(int[][] m)

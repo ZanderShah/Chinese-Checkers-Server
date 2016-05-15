@@ -55,22 +55,21 @@ public class Server extends JPanel
 		System.out.println("All clients connected :)");
 
 		for (int i = 0; i < playersConnected; i++)
-			clients.get(i).getOut().printf("2 %d%n", i + 1);
+			clients.get(i).newGame(i + 1);
 
 		for (int i = 0; i < board.length; i++)
 			for (int j = 0; j < board[0].length; j++)
 				if (board[i][j] != 0 && board[i][j] != -1)
-					shout(String.format("3 %d %d %d%n", board[i][j], i, j));
+					shout(new byte[] {3, (byte) board[i][j], (byte) i, (byte) j});
 
 		gameStarted = true;
 	}
 
-	public void shout(String message)
+	public void shout(byte[] command)
 	{
 		for (Client c : clients)
 		{
-			c.getOut().println(message);
-			c.getOut().flush();
+			c.sendCommand(command);
 		}
 	}
 
@@ -149,24 +148,21 @@ public class Server extends JPanel
 				{
 					if (turn == colour && gameStarted)
 					{
-						client.getOut().println(4);
-						client.getOut().flush();
-
 						int[][] move = client.getMove();
 
-						if (!inBounds(move[0][0], move[0][1])
-								|| !inBounds(move[1][0], move[1][1])
-								|| board[move[0][0]][move[0][1]] != colour
-								|| board[move[1][0]][move[1][1]] != 0
-								|| !valid(move[0][0], move[0][1], move[1][0],
-										move[1][1]))
-						{
-							client.getOut().println(5);
-							client.getOut().flush();
+						if (move != null) {
+							if (!inBounds(move[0][0], move[0][1])
+									|| !inBounds(move[1][0], move[1][1])
+									|| board[move[0][0]][move[0][1]] != colour
+									|| board[move[1][0]][move[1][1]] != 0
+									|| !valid(move[0][0], move[0][1], move[1][0],
+											move[1][1]))
+							{
+								client.invalidMove();
+							}
+							else
+								shout(new byte[] {1, (byte) move[0][0], (byte) move[0][1], (byte) move[1][0], (byte) move[1][1]});
 						}
-						else
-							shout(String.format("1 %d %d %d %d%n", move[0][0],
-									move[0][1], move[1][0], move[1][1]));
 
 						turn = (turn + 1) % 6;
 					}
