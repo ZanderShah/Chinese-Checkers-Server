@@ -10,7 +10,8 @@ public class Server extends JPanel
 	private ArrayList<Thread> threads;
 	private ArrayList<Client> clients;
 	private static boolean gameOver, gameStarted;
-	private int turn, board[][];
+	private int turn;
+	private static int[][] board;
 	private static Display display;
 
 	public static void main(String[] args)
@@ -52,15 +53,15 @@ public class Server extends JPanel
 		}
 
 		System.out.println("All clients connected :)");
-		
+
 		for (int i = 0; i < playersConnected; i++)
-			whisper(String.format("2 %d", i + 1), i);
-		
+			clients.get(i).getOut().printf("2 %d%n", i + 1);
+
 		for (int i = 0; i < board.length; i++)
 			for (int j = 0; j < board[0].length; j++)
 				if (board[i][j] != 0 && board[i][j] != -1)
-					shout(String.format("3 %d %d %d", board[i][j], i, j));
-		
+					shout(String.format("3 %d %d %d%n", board[i][j], i, j));
+
 		gameStarted = true;
 	}
 
@@ -73,10 +74,59 @@ public class Server extends JPanel
 		}
 	}
 
-	public void whisper(String message, int recipient)
+	static boolean valid(int r, int c, int gR, int gC)
 	{
-		clients.get(recipient).getOut().println(message);
-		clients.get(recipient).getOut().flush();
+		if (Math.abs(r - gR) <= 1 && Math.abs(c - gC) <= 1
+				&& r - gR != -(c - gC))
+			return true;
+
+		return hop(r, c, gR, gC, new boolean[17][17]);
+	}
+
+	static boolean hop(int r, int c, int gR, int gC, boolean[][] vis)
+	{
+		if (r == gR && c == gC)
+			return true;
+
+		vis[r][c] = true;
+
+		boolean ret = false;
+
+		if (inBounds(r + 2, c) && board[r + 1][c] > 0 && board[r + 2][c] == 0
+				&& !vis[r + 2][c] && hop(r + 2, c, gR, gC, vis))
+			ret = true;
+
+		if (inBounds(r + 2, c + 2) && board[r + 1][c + 1] > 0
+				&& board[r + 2][c + 2] == 0 && !vis[r + 2][c + 2]
+				&& hop(r + 2, c + 2, gR, gC, vis))
+			ret = true;
+
+		if (inBounds(r - 2, c - 2) && board[r - 2][c - 2] > 0
+				&& board[r - 2][c - 2] == 0 && !vis[r - 2][c - 2]
+				&& hop(r - 2, c - 2, gR, gC, vis))
+			ret = true;
+
+		if (inBounds(r - 2, c) && board[r - 1][c] > 0
+				&& board[r - 2][c] == 0 && !vis[r - 2][c]
+				&& hop(r - 2, c, gR, gC, vis))
+			ret = true;
+
+		if (inBounds(r, c + 2) && board[r][c + 1] > 0
+				&& board[r][c + 2] == 0 && !vis[r][c + 2]
+				&& hop(r, c + 1, gR, gC, vis))
+			ret = true;
+
+		if (inBounds(r, c - 2) && board[r][c - 1] > 0
+				&& board[r][c - 2] == 0 && !vis[r][c - 2]
+				&& hop(r, c - 2, gR, gC, vis))
+			ret = true;
+
+		return ret;
+	}
+
+	static boolean inBounds(int r, int c)
+	{
+		return r >= 0 && c >= 0 && r < 17 && c < 17;
 	}
 
 	class PlayerThread implements Runnable
@@ -94,7 +144,7 @@ public class Server extends JPanel
 		public void run()
 		{
 			while (!gameOver)
-			{		
+			{
 				try
 				{
 					if (turn == colour && gameStarted)
@@ -103,7 +153,20 @@ public class Server extends JPanel
 						client.getOut().flush();
 
 						int[][] move = client.getMove();
-						System.out.println(move[0][0] + " " + move[0][1]);
+
+						if (!inBounds(move[0][0], move[0][1])
+								|| !inBounds(move[1][0], move[1][1])
+								|| board[move[0][0]][move[0][1]] != colour
+								|| board[move[1][0]][move[1][1]] != 0
+								|| !valid(move[0][0], move[0][1], move[1][0],
+										move[1][1]))
+						{
+							client.getOut().println(5);
+							client.getOut().flush();
+						}
+						else
+							shout(String.format("1 %d %d %d %d%n", move[0][0],
+									move[0][1], move[1][0], move[1][1]));
 
 						turn = (turn + 1) % 6;
 					}
