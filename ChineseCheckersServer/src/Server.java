@@ -73,7 +73,7 @@ public class Server extends JPanel
 				if (board[i][j] != 0 && board[i][j] != -1)
 					//Tells everyone to place pieces
 					//3 (colour) (row) (col)
-					shout(new byte[] {3, (byte) board[i][j], (byte) i, (byte) j});
+					shout("3 " + board[i][j] + " " + i + " " + j);
 
 		gameStarted = true;
 		
@@ -103,10 +103,7 @@ public class Server extends JPanel
 						gameOver = true;
 						gameStarted = false;
 						System.out.printf("Player %d has won!", player);
-						byte[] winMessage = new byte[2];
-						winMessage[0] = 7;
-						winMessage[1] = (byte)player;
-						shout(winMessage);
+						shout("7 " + player);
 					}
 			}
 		}
@@ -125,7 +122,7 @@ public class Server extends JPanel
 		return win;
 	}
 	
-	public void shout(byte[] command)
+	public void shout(String command)
 	{
 		for (Client c : clients)
 		{
@@ -225,7 +222,7 @@ public class Server extends JPanel
 								client.invalidMove();
 							}
 							else
-								shout(new byte[] {1, (byte) move[0][0], (byte) move[0][1], (byte) move[1][0], (byte) move[1][1]});
+								shout("1 " + move[0][0] + " " + move[0][1] + " " + move[1][0] + " " + move[1][1]);
 						}
 
 						turn++;// = (turn + 1) % 6;///////////////////////////////////////////

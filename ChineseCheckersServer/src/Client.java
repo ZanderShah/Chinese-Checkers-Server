@@ -1,6 +1,9 @@
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Arrays;
 
@@ -8,7 +11,9 @@ public class Client
 {
 	private Socket sock;
 	private InputStream in;
+	private BufferedReader br;
 	private OutputStream out;
+	private PrintWriter pw;
 	private int colour;
 
 	public Client(Socket socket, int colour)
@@ -17,7 +22,9 @@ public class Client
 		{
 			sock = socket;
 			in = sock.getInputStream();
+			br = new BufferedReader(new InputStreamReader(in));
 			out = sock.getOutputStream();
+			pw = new PrintWriter(out);
 			this.colour = colour;
 		}
 		catch (IOException e)
@@ -39,19 +46,8 @@ public class Client
 	public void newGame(int c)
 	{
 		colour = c;
-		try
-		{
-			//out.write(c);
-			byte[] newGameMessage = new byte[2];
-			newGameMessage[0] = 2;
-			newGameMessage[1] = (byte)c;
-			out.write(newGameMessage, 0, newGameMessage.length);
-			out.flush();
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
+		pw.println("2 " + c);
+		pw.flush();
 	}
 
 	/**
@@ -66,16 +62,17 @@ public class Client
 	{
 		try
 		{
+			while (br.ready()) br.readLine();
 			System.out.printf("Player %d queried for move%n", colour);
-			out.write(4);
-			out.flush();
+			pw.println("4");
+			pw.flush();
 		}
-		catch (Exception e)
+		catch (IOException e)
 		{
 			e.printStackTrace();
 		}
 		
-		MoveThread m = new MoveThread(in, colour);
+		MoveThread m = new MoveThread(br, colour);
 		Thread t = new Thread(m);
 		
 		t.start();
@@ -95,38 +92,27 @@ public class Client
 		//Tell a player of timeout
 		if (move == null)
 		{
-			try
-			{
-				System.out.printf("Player %d timed out while choosing a move%n", colour);
-				out.write(6);
-				out.flush();
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
+			System.out.printf("Player %d timed out while choosing a move%n", colour);
+			pw.println("6");
+			pw.flush();
 		}
 		
 		return move;
 	}
 
 	public void invalidMove() {
-		try {
-			out.write(5);
-			out.flush();
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
+		pw.println("5");
+		pw.flush();
 	}
 	
-	public void sendCommand(byte[] command) {
-		try {
-			out.write(command, 0, command.length);
-			out.flush();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public void sendCommand(String command) {
+		pw.println(command);
+		pw.flush();
+	}
+
+	public void sendMove(int[][] m)
+	{
+		sendCommand("1 " + m[0][0] + " " + m[0][1] + " " + m[1][0] + " " + m[1][1]);
 	}
 }
 
@@ -139,10 +125,10 @@ class MoveThread implements Runnable
 	private boolean timeout = false;
 	private int[][] move;
 	private boolean moveReceived = false;
-	private InputStream in;
+	private BufferedReader in;
 	int colour;
 
-	public MoveThread(InputStream in, int c)
+	public MoveThread(BufferedReader in, int c)
 	{
 		move = new int[2][2];
 		this.in = in;
@@ -155,18 +141,18 @@ class MoveThread implements Runnable
 	{
 		try
 		{
-			while (in.available() < 5 && !timeout){};
+			while (!in.ready() && !timeout){};
 			
 			if (!timeout)
 			{
 				//If the first number is 1 (indicating a player wants to move)
-				int command = in.read();
-				if (command == 1)
+				String[] command = in.readLine().split(" ");
+				if (Integer.parseInt(command[0]) == 1)
 				{
-					move[0][0] = in.read();
-					move[0][1] = in.read();
-					move[1][0] = in.read();
-					move[1][1] = in.read();
+					move[0][0] = Integer.parseInt(command[1]);
+					move[0][1] = Integer.parseInt(command[2]);
+					move[1][0] = Integer.parseInt(command[3]);
+					move[1][1] = Integer.parseInt(command[4]);
 					moveReceived = true;
 					System.out.printf("Move recieved from player %d: [%d %d] -> [%d %d]%n", colour, move[0][0], move[0][1], move[1][0], move[1][1]);
 				}
@@ -191,10 +177,5 @@ class MoveThread implements Runnable
 		} else {
 			return null;
 		}
-	}
-
-	public void sendMove(int[][] m)
-	{
-
 	}
 }
