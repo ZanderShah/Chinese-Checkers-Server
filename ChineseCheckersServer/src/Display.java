@@ -13,6 +13,9 @@ public class Display extends JPanel
 	private final int SPACE = 32;
 	private final int DIAMETER = 30;
 
+	/**
+	 * Sets up the board and GUI
+	 */
 	public void go()
 	{
 		board = new int[17][17];
@@ -53,6 +56,9 @@ public class Display extends JPanel
 		return board;
 	}
 
+	/**
+	 * Paints the pieces on the board
+	 */
 	public void paintComponent(Graphics g)
 	{
 		// Initialize left shift
@@ -85,6 +91,14 @@ public class Display extends JPanel
 			}
 	}
 
+	/**
+	 * Fills the board array with integers that correspond to each player
+	 * @param attitude whether or not the triangle is upright or inverted
+	 * @param board the board
+	 * @param player the number of the player from 1 to 6
+	 * @param row the row of the tip of the triangle
+	 * @param col the col of the tip of the triangle
+	 */
 	public static void fillTriangle(int attitude, int[][] board, int player,
 			int row, int col)
 	{
@@ -94,6 +108,7 @@ public class Display extends JPanel
 						: col - j] = player;
 	}
 
+	//Never used
 	public static void main(String[] args)
 	{
 		new Display().go();

@@ -41,7 +41,11 @@ public class Client
 		colour = c;
 		try
 		{
-			out.write(c);
+			//out.write(c);
+			byte[] newGameMessage = new byte[2];
+			newGameMessage[0] = 2;
+			newGameMessage[1] = (byte)c;
+			out.write(newGameMessage, 0, newGameMessage.length);
 			out.flush();
 		}
 		catch (Exception e)
@@ -88,6 +92,7 @@ public class Client
 		
 		int[][] move = m.getMove();
 		
+		//Tell a player of timeout
 		if (move == null)
 		{
 			try
@@ -154,6 +159,7 @@ class MoveThread implements Runnable
 			
 			if (!timeout)
 			{
+				//If the first number is 1 (indicating a player wants to move)
 				int command = in.read();
 				if (command == 1)
 				{
