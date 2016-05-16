@@ -86,7 +86,7 @@ public class Server extends JPanel
 		while(!gameOver)
 		{
 			//Check to see if a cycle has been made and make sure that it's not the very first turn
-			if(turn %6 == 1 && turn != 1)
+			if((turn-1) %6+1 == 1 && turn != 1)
 			{
 				//Check to see if any players have won.
 				boolean[] wins = new boolean[7];
