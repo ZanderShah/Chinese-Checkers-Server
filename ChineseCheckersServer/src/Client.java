@@ -74,9 +74,9 @@ public class Client
 		
 		MoveThread m = new MoveThread(br, colour);
 		Thread t = new Thread(m);
-		
+
 		t.start();
-		
+
 		try
 		{
 			Thread.sleep(2000);
@@ -86,17 +86,17 @@ public class Client
 			e.printStackTrace();
 		}
 		m.timeout();
-		
+
 		int[][] move = m.getMove();
-		
-		//Tell a player of timeout
+
+		// Tell a player of timeout
 		if (move == null)
 		{
 			System.out.printf("Player %d timed out while choosing a move%n", colour);
 			pw.println("6");
 			pw.flush();
 		}
-		
+
 		return move;
 	}
 
@@ -142,7 +142,6 @@ class MoveThread implements Runnable
 		try
 		{
 			while (!in.ready() && !timeout){};
-			
 			if (!timeout)
 			{
 				//If the first number is 1 (indicating a player wants to move)
@@ -154,13 +153,16 @@ class MoveThread implements Runnable
 					move[1][0] = Integer.parseInt(command[3]);
 					move[1][1] = Integer.parseInt(command[4]);
 					moveReceived = true;
-					System.out.printf("Move recieved from player %d: [%d %d] -> [%d %d]%n", colour, move[0][0], move[0][1], move[1][0], move[1][1]);
+					System.out
+							.printf("Move recieved from player %d: [%d %d] -> [%d %d]%n",
+									colour, move[0][0], move[0][1], move[1][0],
+									move[1][1]);
 				}
 			}
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+
 		}
 	}
 
@@ -172,9 +174,12 @@ class MoveThread implements Runnable
 
 	public int[][] getMove()
 	{
-		if (moveReceived) {
+		if (moveReceived)
+		{
 			return move;
-		} else {
+		}
+		else
+		{
 			return null;
 		}
 	}
