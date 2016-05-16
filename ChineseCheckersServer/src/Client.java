@@ -142,6 +142,7 @@ class MoveThread implements Runnable
 			{
 				//If the first number is 1 (indicating a player wants to move)
 				String[] command = in.readLine().split(" ");
+				System.out.println(command);
 				if (Integer.parseInt(command[0]) == 1)
 				{
 					move[0][0] = Integer.parseInt(command[1]);
