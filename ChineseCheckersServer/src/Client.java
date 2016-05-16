@@ -41,12 +41,11 @@ public class Client
 		colour = c;
 		try
 		{
-			//out.write(c);
+			// out.write(c);
 			byte[] newGameMessage = new byte[2];
 			newGameMessage[0] = 2;
-			newGameMessage[1] = (byte)c;
-			out.write(newGameMessage, 0, newGameMessage.length);
-			out.flush();
+			newGameMessage[1] = (byte) c;
+			sendCommand(newGameMessage);
 		}
 		catch (Exception e)
 		{
@@ -68,18 +67,19 @@ public class Client
 		{
 			System.out.printf("Player %d queried for move%n", colour);
 			out.write(4);
+			System.out.println(4);
 			out.flush();
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
-		
+
 		MoveThread m = new MoveThread(in, colour);
 		Thread t = new Thread(m);
-		
+
 		t.start();
-		
+
 		try
 		{
 			Thread.sleep(2000);
@@ -89,15 +89,16 @@ public class Client
 			e.printStackTrace();
 		}
 		m.timeout();
-		
+
 		int[][] move = m.getMove();
-		
-		//Tell a player of timeout
+
+		// Tell a player of timeout
 		if (move == null)
 		{
 			try
 			{
-				System.out.printf("Player %d timed out while choosing a move%n", colour);
+				System.out.printf(
+						"Player %d timed out while choosing a move%n", colour);
 				out.write(6);
 				out.flush();
 			}
@@ -106,25 +107,35 @@ public class Client
 				e.printStackTrace();
 			}
 		}
-		
+
 		return move;
 	}
 
-	public void invalidMove() {
-		try {
+	public void invalidMove()
+	{
+		try
+		{
 			out.write(5);
 			out.flush();
 		}
-		catch (IOException e) {
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 	}
-	
-	public void sendCommand(byte[] command) {
-		try {
-			out.write(command, 0, command.length);
-			out.flush();
-		} catch (Exception e) {
+
+	public void sendCommand(byte[] command)
+	{
+		try
+		{
+			for (byte b : command)
+			{
+				out.write(b);
+				out.flush();
+			}
+		}
+		catch (Exception e)
+		{
 			e.printStackTrace();
 		}
 	}
@@ -155,11 +166,14 @@ class MoveThread implements Runnable
 	{
 		try
 		{
-			while (in.available() < 5 && !timeout){};
-			
+			while (in.available() < 5 && !timeout)
+			{
+			}
+			;
+
 			if (!timeout)
 			{
-				//If the first number is 1 (indicating a player wants to move)
+				// If the first number is 1 (indicating a player wants to move)
 				int command = in.read();
 				if (command == 1)
 				{
@@ -168,13 +182,16 @@ class MoveThread implements Runnable
 					move[1][0] = in.read();
 					move[1][1] = in.read();
 					moveReceived = true;
-					System.out.printf("Move recieved from player %d: [%d %d] -> [%d %d]%n", colour, move[0][0], move[0][1], move[1][0], move[1][1]);
+					System.out
+							.printf("Move recieved from player %d: [%d %d] -> [%d %d]%n",
+									colour, move[0][0], move[0][1], move[1][0],
+									move[1][1]);
 				}
 			}
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+
 		}
 	}
 
@@ -186,9 +203,12 @@ class MoveThread implements Runnable
 
 	public int[][] getMove()
 	{
-		if (moveReceived) {
+		if (moveReceived)
+		{
 			return move;
-		} else {
+		}
+		else
+		{
 			return null;
 		}
 	}
