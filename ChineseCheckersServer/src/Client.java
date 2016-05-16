@@ -72,19 +72,15 @@ public class Client
 			e.printStackTrace();
 		}
 		
+		long start = System.currentTimeMillis();
 		MoveThread m = new MoveThread(br, colour);
 		Thread t = new Thread(m);
 
 		t.start();
 
-		try
-		{
-			Thread.sleep(2000);
-		}
-		catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		}
+		
+		while (m.getMove() == null && System.currentTimeMillis() - start < 60000);
+		
 		m.timeout();
 
 		int[][] move = m.getMove();
