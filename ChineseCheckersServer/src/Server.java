@@ -102,8 +102,9 @@ public class Server extends JPanel
 					{
 						gameOver = true;
 						gameStarted = false;
-						System.out.printf("Player %d has won!", player);
-						shout("7 " + player);
+						System.out.printf("Player %d has won!", (player+2)%6+1);
+						
+						shout("7 " + (player+2)%6+1);
 					}
 			}
 		}
