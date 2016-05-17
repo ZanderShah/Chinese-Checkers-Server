@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -7,7 +8,8 @@ import java.awt.RenderingHints;
 import javax.swing.JPanel;
 
 public class Display extends JPanel {
-	static int[][] board;
+	private int[][] board;
+	private int turn;
 	private final Dimension SIZE = new Dimension(1024, 768);
 	private final int SPACE = 50;
 	private final int DIAMETER = 40;
@@ -38,8 +40,9 @@ public class Display extends JPanel {
 		this.setPreferredSize(SIZE);
 	}
 
-	public void updateBoard(int[][] board) {
-		board = board;
+	public void update(int[][] board, int t) {
+		this.board = board;
+		turn = t;
 	}
 
 	public int[][] getBoard() {
@@ -53,10 +56,7 @@ public class Display extends JPanel {
 		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g.setColor(Color.WHITE);
 		g.clearRect(0, 0, (int) SIZE.getWidth(), (int) SIZE.getHeight());
-		// Initialize left shift
-		// double left = 0;
-		for (int i = 0; i < 17; i++)
-			// , left += SPACE / Math.sqrt(3) - 2)
+		for (int i = 0; i < 17; i++) {
 			for (int j = 0; j < 17; j++) {
 				if (board[i][j] != -1) {
 					int x = (int) (getWidth() / 2 - WIDTH / 2 + 4 * SPACE / 2 - DIAMETER / 2) + (j * SPACE - i * SPACE / 2);
@@ -82,6 +82,11 @@ public class Display extends JPanel {
 					g.fillOval(x, y, DIAMETER, DIAMETER);
 				}
 			}
+		}
+		
+		g.setColor(Color.BLACK);
+		g.setFont(g.getFont().deriveFont(Font.PLAIN, 32));
+		g.drawString("Current player: " + (turn + 1), 5, 36);
 	}
 
 	/**

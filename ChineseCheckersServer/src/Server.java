@@ -253,11 +253,11 @@ public class Server extends JFrame
 							}
 						}
 
-						display.updateBoard(board);
-						display.repaint();
 						checkForWin();
-						turn++;// = (turn + 1) %
-								// 6;///////////////////////////////////////////
+						turn = (turn + 1) % 6;
+						
+						display.update(board, turn);
+						display.repaint();
 					}
 				}
 				catch (Exception e)
