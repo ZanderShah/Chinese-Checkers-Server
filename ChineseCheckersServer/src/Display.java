@@ -1,6 +1,8 @@
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 
 import javax.swing.JPanel;
 
@@ -50,7 +52,7 @@ public class Display extends JPanel
 	 */
 	public void paintComponent(Graphics g)
 	{
-		System.out.println("repainting");
+		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		// Initialize left shift
 		double left = 0;
 		for (int i = 0; i < 17; i++, left += SPACE / Math.sqrt(3) - 2)

@@ -145,7 +145,6 @@ class MoveThread implements Runnable
 			{
 				//If the first number is 1 (indicating a player wants to move)
 				String[] command = in.readLine().split(" ");
-				System.out.println(Arrays.toString(command));
 				if (Integer.parseInt(command[0]) == 1)
 				{
 					move[0][0] = Integer.parseInt(command[1]);
@@ -153,10 +152,8 @@ class MoveThread implements Runnable
 					move[1][0] = Integer.parseInt(command[3]);
 					move[1][1] = Integer.parseInt(command[4]);
 					moveReceived = true;
-					System.out
-							.printf("Move recieved from player %d: [%d %d] -> [%d %d]%n",
-									colour, move[0][0], move[0][1], move[1][0],
-									move[1][1]);
+					System.out.printf("Move recieved from player %d: [%d %d] -> [%d %d]%n",
+									colour, move[0][0], move[0][1], move[1][0], move[1][1]);
 				}
 			}
 		}
