@@ -78,8 +78,14 @@ public class Client
 
 		t.start();
 
-		
-		while (m.getMove() == null && System.currentTimeMillis() - start < 5000);
+		// Query for a move every 10ms until the timeout is reached or the move is recieved
+		while (m.getMove() == null && System.currentTimeMillis() - start < 5000) {
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 		
 		m.timeout();
 
@@ -135,7 +141,6 @@ class MoveThread implements Runnable
 		move[1][1] = -1;
 	}
 
-	@Override
 	public void run()
 	{
 		try

@@ -86,7 +86,6 @@ class TilmanTestChatProgramClient {
 
 		sendButton = new JButton("SEND");
 		ActionListener send = new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				String s = textField.getText();
 				if (!s.equals("")) {
@@ -104,7 +103,6 @@ class TilmanTestChatProgramClient {
 
 		clearButton = new JButton("CLEAR");
 		clearButton.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				textField.setText("");
 			}
@@ -152,43 +150,6 @@ class TilmanTestChatProgramClient {
 	}
 
 	public void setUpWindow(JFrame window) {
-		window.addWindowListener(new WindowListener() {
-
-			@Override
-			public void windowActivated(WindowEvent e) {
-				// TODO Auto-generated method stub
-			}
-
-			@Override
-			public void windowClosed(WindowEvent e) {
-				finished = true;
-			}
-
-			@Override
-			public void windowClosing(WindowEvent e) {
-				// TODO Auto-generated method stub
-			}
-
-			@Override
-			public void windowDeactivated(WindowEvent e) {
-				// TODO Auto-generated method stub
-			}
-
-			@Override
-			public void windowDeiconified(WindowEvent e) {
-				// TODO Auto-generated method stub
-			}
-
-			@Override
-			public void windowIconified(WindowEvent e) {
-				// TODO Auto-generated method stub
-			}
-
-			@Override
-			public void windowOpened(WindowEvent e) {
-				// TODO Auto-generated method stub
-			}
-		});
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 }

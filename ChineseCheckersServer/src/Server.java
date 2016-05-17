@@ -180,7 +180,7 @@ public class Server extends JFrame
 				&& hop(row + 2, col + 2, goalRow, goalCol, vis))
 			ret = true;
 
-		if (inBounds(row - 2, col - 2) && board[row - 2][col - 2] > 0
+		if (inBounds(row - 2, col - 2) && board[row - 1][col - 1] > 0
 				&& board[row - 2][col - 2] == 0 && !vis[row - 2][col - 2]
 				&& hop(row - 2, col - 2, goalRow, goalCol, vis))
 			ret = true;
@@ -192,7 +192,7 @@ public class Server extends JFrame
 
 		if (inBounds(row, col + 2) && board[row][col + 1] > 0
 				&& board[row][col + 2] == 0 && !vis[row][col + 2]
-				&& hop(row, col + 1, goalRow, goalCol, vis))
+				&& hop(row, col + 2, goalRow, goalCol, vis))
 			ret = true;
 
 		if (inBounds(row, col - 2) && board[row][col - 1] > 0
@@ -219,7 +219,6 @@ public class Server extends JFrame
 			colour = client.getColour();
 		}
 
-		@Override
 		public void run()
 		{
 			while (!gameOver)
@@ -245,6 +244,7 @@ public class Server extends JFrame
 											move[1][1]))
 							{
 								client.invalidMove();
+								System.out.printf("Move from player %d was invalid!%n", colour);
 							}
 							else {
 								shout("1 " + move[0][0] + " " + move[0][1] + " " + move[1][0] + " " + move[1][1]);
