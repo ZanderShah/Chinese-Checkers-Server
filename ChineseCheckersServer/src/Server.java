@@ -99,12 +99,12 @@ public class Server extends JFrame
 			{
 				//Check to see if any players have won.
 				boolean[] wins = new boolean[7];
-				wins[1] = checkTriangle(-1, board, 16, 12);
-				wins[2] = checkTriangle(1, board, 9, 13);
-				wins[3] = checkTriangle(-1, board, 7, 12);
-				wins[4] = checkTriangle(1, board, 0, 4);
-				wins[5] = checkTriangle(-1, board, 7, 3);
-				wins[6] = checkTriangle(1, board, 9, 4);
+				wins[1] = checkTriangle(-1, 4, board, 16, 12);
+				wins[2] = checkTriangle(1, 5, board, 9, 13);
+				wins[3] = checkTriangle(-1, 6, board, 7, 12);
+				wins[4] = checkTriangle(1, 1, board, 0, 4);
+				wins[5] = checkTriangle(-1, 2, board, 7, 3);
+				wins[6] = checkTriangle(1, 3, board, 9, 4);
 				
 				for(int player = 1; player <= 6; player++)
 					if(wins[player])
@@ -121,18 +121,25 @@ public class Server extends JFrame
 		System.out.println("Done checking for wins");
 	}
 
-	public static boolean checkTriangle(int attitude, int[][] board,
+	public static boolean checkTriangle(int attitude, int player, int[][] board,
 			int row, int col)
 	{
 		boolean win = true;
+		boolean hasWin = false;
 		for (int i = 0; i < 4; i++)
 			for (int j = 0; j <= i; j++)
+			{
 				// If the place is empty
 				if (board[attitude > 0 ? row + i : row - i][attitude > 0 ? col
 						+ j
 						: col - j] == 0)
 					win = false;
-		return win;
+				if (board[attitude > 0 ? row + i : row - i][attitude > 0 ? col
+						+ j
+						: col - j] == player)
+					hasWin = false;
+			}
+		return win && hasWin;
 	}
 	
 	public void shout(String command)

@@ -79,7 +79,7 @@ public class Client
 		t.start();
 
 		
-		while (m.getMove() == null && System.currentTimeMillis() - start < 60000);
+		while (m.getMove() == null && System.currentTimeMillis() - start < 5000);
 		
 		m.timeout();
 

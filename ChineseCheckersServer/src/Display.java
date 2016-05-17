@@ -53,9 +53,11 @@ public class Display extends JPanel
 	public void paintComponent(Graphics g)
 	{
 		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g.setColor(Color.WHITE);
+		g.clearRect(0, 0, 900, 800);
 		// Initialize left shift
-		double left = 0;
-		for (int i = 0; i < 17; i++, left += SPACE / Math.sqrt(3) - 2)
+//		double left = 0;
+		for (int i = 0; i < 17; i++)//, left += SPACE / Math.sqrt(3) - 2)
 			for (int j = 0; j < 17; j++)
 			{
 				// 0 = empty position
@@ -77,9 +79,8 @@ public class Display extends JPanel
 				// -1 = invalid position
 				else
 					g.setColor(Color.WHITE);
-				g.fillOval(
-						(int) ((j * SPACE) - left + SIZE.width / 2 - 4.5 * SPACE),
-						i * SPACE + SIZE.height / 10, DIAMETER, DIAMETER);
+				g.fillOval((int) ((j * SPACE) - (SPACE / 2)) /*- left + SIZE.width / 2 - 4.5 * SPACE)*/,
+						(int) (i * SPACE * Math.sqrt(3) / 2), DIAMETER, DIAMETER);
 			}
 	}
 
