@@ -1,10 +1,11 @@
+import java.awt.Color;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-import javax.swing.JPanel;
+import javax.swing.JFrame;
 
-public class Server extends JPanel
+public class Server extends JFrame
 {
 	// Initialize variables
 	private ServerSocket serverSocket;
@@ -19,10 +20,18 @@ public class Server extends JPanel
 	{
 		// Create the board
 		display = new Display();
-		display.go();
 
 		// Create the server
 		new Server().go();
+	}
+	
+	public Server() {
+		setContentPane(display);
+		setResizable(false);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBackground(Color.WHITE);
+		pack();
+		setVisible(true);
 	}
 
 	/**
@@ -108,6 +117,8 @@ public class Server extends JPanel
 					}
 			}
 		}
+		
+		System.out.println("Done checking for wins");
 	}
 
 	public static boolean checkTriangle(int attitude, int[][] board,
@@ -228,8 +239,11 @@ public class Server extends JPanel
 							{
 								client.invalidMove();
 							}
-							else
+							else {
 								shout("1 " + move[0][0] + " " + move[0][1] + " " + move[1][0] + " " + move[1][1]);
+								board[move[0][0]][move[0][1]] = 0;
+								board[move[1][0]][move[1][1]] = colour;
+							}
 						}
 
 						display.updateBoard(board);

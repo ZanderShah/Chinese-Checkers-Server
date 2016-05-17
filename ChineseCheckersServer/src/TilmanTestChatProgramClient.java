@@ -144,7 +144,7 @@ class TilmanTestChatProgramClient {
 
 	public SocketLocation where() {
 		// SocketLocation s = new SocketLocation("10.242.190.128", 6969);
-		SocketLocation s = new SocketLocation("10.242.165.129", 420);
+		SocketLocation s = new SocketLocation("localhost", 420);
 //		String str = JOptionPane.showInputDialog("What is the ip?", s.getIP());
 //		int p = Integer.parseInt(JOptionPane.showInputDialog("Which port?",
 //				s.getPort()));

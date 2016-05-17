@@ -2,12 +2,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 public class Display extends JPanel
 {
-	private JFrame frame;
 	static int[][] board;
 	private final Dimension SIZE = new Dimension(900, 800);
 	private final int SPACE = 32;
@@ -16,7 +14,7 @@ public class Display extends JPanel
 	/**
 	 * Sets up the board and GUI
 	 */
-	public void go()
+	public Display()
 	{
 		board = new int[17][17];
 		for (int i = 0; i < 17; i++)
@@ -34,16 +32,7 @@ public class Display extends JPanel
 		fillTriangle(-1, board, 5, 7, 3);
 		fillTriangle(1, board, 6, 9, 4);
 
-		frame = new JFrame();
-		frame.setResizable(false);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setMinimumSize(SIZE);
-		Display d = new Display();
-
-		frame.getContentPane().add(d);
-		frame.setBackground(Color.WHITE);
-		frame.pack();
-		frame.setVisible(true);
+		this.setPreferredSize(SIZE);
 	}
 
 	public void updateBoard(int[][] board)
@@ -61,6 +50,7 @@ public class Display extends JPanel
 	 */
 	public void paintComponent(Graphics g)
 	{
+		System.out.println("repainting");
 		// Initialize left shift
 		double left = 0;
 		for (int i = 0; i < 17; i++, left += SPACE / Math.sqrt(3) - 2)
@@ -106,11 +96,5 @@ public class Display extends JPanel
 			for (int j = 0; j <= i; j++)
 				board[attitude > 0 ? row + i : row - i][attitude > 0 ? col + j
 						: col - j] = player;
-	}
-
-	//Never used
-	public static void main(String[] args)
-	{
-		new Display().go();
 	}
 }
