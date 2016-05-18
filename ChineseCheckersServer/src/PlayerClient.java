@@ -177,8 +177,9 @@ public class PlayerClient extends JFrame {
 						move[0][1] = Integer.parseInt(command[2]);
 						move[1][0] = Integer.parseInt(command[3]);
 						move[1][1] = Integer.parseInt(command[4]);
+						
+						board[move[1][0]][move[1][1]] = board[move[0][0]][move[0][1]];
 						board[move[0][0]][move[0][1]] = 0;
-						board[move[1][0]][move[1][1]] = colour;
 						GamePanel.this.repaint(0);
 						break;
 					case 2:

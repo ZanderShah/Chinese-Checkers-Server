@@ -257,7 +257,7 @@ public class Server extends JFrame
 						}
 
 						checkForWin();
-						turn = (turn + 1) % 6;
+						turn = (turn % 6)+1;
 						
 						display.update(board, turn);
 						display.repaint();

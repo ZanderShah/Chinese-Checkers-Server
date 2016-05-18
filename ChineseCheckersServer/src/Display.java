@@ -86,7 +86,7 @@ public class Display extends JPanel {
 		
 		g.setColor(Color.BLACK);
 		g.setFont(g.getFont().deriveFont(Font.PLAIN, 32));
-		g.drawString("Current player: " + (turn + 1), 5, 36);
+		g.drawString("Current player: " + (turn), 5, 36);
 	}
 
 	/**
