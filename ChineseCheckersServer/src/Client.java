@@ -5,10 +5,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.Arrays;
 
 public class Client
 {
+	private static final int TIMEOUT = 15000;
+	
 	private Socket sock;
 	private InputStream in;
 	private BufferedReader br;
@@ -79,7 +80,7 @@ public class Client
 		t.start();
 
 		// Query for a move every 10ms until the timeout is reached or the move is recieved
-		while (m.getMove() == null && System.currentTimeMillis() - start < 5000) {
+		while (m.getMove() == null && System.currentTimeMillis() - start < TIMEOUT) {
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {

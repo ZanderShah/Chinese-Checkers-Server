@@ -55,7 +55,7 @@ public class Display extends JPanel {
 	public void paintComponent(Graphics g) {
 		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g.setColor(Color.WHITE);
-		g.clearRect(0, 0, (int) SIZE.getWidth(), (int) SIZE.getHeight());
+		g.clearRect(0, 0, getWidth(), getHeight());
 		for (int i = 0; i < 17; i++) {
 			for (int j = 0; j < 17; j++) {
 				if (board[i][j] != -1) {
