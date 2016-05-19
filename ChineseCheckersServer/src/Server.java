@@ -26,6 +26,7 @@ public class Server extends JFrame
 	}
 	
 	public Server() {
+		super("Chinese Checkers Server");
 		setContentPane(display);
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -73,16 +74,20 @@ public class Server extends JFrame
 		System.out.println("All clients connected :)");
 
 		// Give each player their colour and tell them new game (2 1-6)
-		for (int i = 0; i < playersConnected; i++)
+		for (int i = 0; i < playersConnected; i++) {
 			clients.get(i).newGame(i + 1);
+		}
 
-		for (int i = 0; i < board.length; i++)
-			for (int j = 0; j < board[0].length; j++)
+		for (int i = 0; i < board.length; i++) {
+			for (int j = 0; j < board[0].length; j++) {
 				// If the location has a player piece
-				if (board[i][j] != 0 && board[i][j] != -1)
+				if (board[i][j] != 0 && board[i][j] != -1) {
 					//Tells everyone to place pieces
 					//3 (colour) (row) (col)
 					shout("3 " + board[i][j] + " " + i + " " + j);
+				}
+			}
+		}
 
 		gameStarted = true;
 	}
@@ -92,11 +97,9 @@ public class Server extends JFrame
 		System.out.println("Checking for wins...");
 		// Check to see if a cycle has been made and make sure that it's not
 		// the very first turn
-		if (turn > 6)
-		{
+		if (turn > 6) {
 			//Check to see if a cycle has been made and make sure that it's not the very first turn
-			if((turn-1) %6+1 == 1 && turn != 1)
-			{
+			if((turn-1) %6+1 == 1 && turn != 1) {
 				//Check to see if any players have won.
 				boolean[] wins = new boolean[7];
 				wins[1] = checkTriangle(-1, 4, board, 16, 12);
@@ -253,11 +256,11 @@ public class Server extends JFrame
 							}
 						}
 
-						display.updateBoard(board);
-						display.repaint();
 						checkForWin();
-						turn++;// = (turn + 1) %
-								// 6;///////////////////////////////////////////
+						turn = (turn % 6)+1;
+						
+						display.update(board, turn);
+						display.repaint();
 					}
 				}
 				catch (Exception e)
