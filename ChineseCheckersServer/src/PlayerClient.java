@@ -195,6 +195,7 @@ public class PlayerClient extends JFrame {
 						break;
 					case 4:
 						turn = true;
+						GamePanel.this.repaint(0);
 						break;
 					case 5:
 						turn = false;

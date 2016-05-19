@@ -7,6 +7,8 @@ import javax.swing.JFrame;
 
 public class Server extends JFrame
 {
+	private static final boolean SINGLE_TEST = false;
+	
 	// Initialize variables
 	private ServerSocket serverSocket;
 	private ArrayList<Thread> threads;
@@ -95,32 +97,24 @@ public class Server extends JFrame
 	public void checkForWin()
 	{
 		System.out.println("Checking for wins...");
-		// Check to see if a cycle has been made and make sure that it's not
-		// the very first turn
-		if (turn > 6) {
-			//Check to see if a cycle has been made and make sure that it's not the very first turn
-			if((turn-1) %6+1 == 1 && turn != 1) {
-				//Check to see if any players have won.
-				boolean[] wins = new boolean[7];
-				wins[1] = checkTriangle(-1, 4, board, 16, 12);
-				wins[2] = checkTriangle(1, 5, board, 9, 13);
-				wins[3] = checkTriangle(-1, 6, board, 7, 12);
-				wins[4] = checkTriangle(1, 1, board, 0, 4);
-				wins[5] = checkTriangle(-1, 2, board, 7, 3);
-				wins[6] = checkTriangle(1, 3, board, 9, 4);
-				
-				for(int player = 1; player <= 6; player++)
-					if(wins[player])
-					{
-						gameOver = true;
-						gameStarted = false;
-						System.out.printf("Player %d has won!", (player+2)%6+1);
-						
-						shout("7 " + (player+2)%6+1);
-					}
-			}
-		}
+		//Check to see if any players have won.
+		boolean[] wins = new boolean[7];
+		wins[1] = checkTriangle(-1, 4, board, 16, 12);
+		wins[2] = checkTriangle(1, 5, board, 9, 13);
+		wins[3] = checkTriangle(-1, 6, board, 7, 12);
+		wins[4] = checkTriangle(1, 1, board, 0, 4);
+		wins[5] = checkTriangle(-1, 2, board, 7, 3);
+		wins[6] = checkTriangle(1, 3, board, 9, 4);
 		
+		for(int player = 1; player <= 6; player++)
+			if(wins[player])
+			{
+				gameOver = true;
+				gameStarted = false;
+				System.out.printf("Player %d has won!", (player+2)%6+1);
+				
+				shout("7 " + (player+2)%6+1);
+			}
 		System.out.println("Done checking for wins");
 	}
 
@@ -229,7 +223,7 @@ public class Server extends JFrame
 				try
 				{
 					// If it is the player's turn and the has has started
-					if ((turn - 1) % 6 + 1 == colour && gameStarted)// //////////////////////////////
+					if (turn == colour && gameStarted)// //////////////////////////////
 					{
 						// Get the move from the client
 						int[][] move = client.getMove();
