@@ -51,7 +51,7 @@ public class Server extends JFrame
 		// Connect players
 		try
 		{
-			serverSocket = new ServerSocket(420);
+			serverSocket = new ServerSocket(421);
 
 			while (playersConnected != 6)// ///////////////////////////////////////////////////////1
 			{
