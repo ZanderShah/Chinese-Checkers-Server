@@ -96,7 +96,6 @@ public class Server extends JFrame
 
 	public void checkForWin()
 	{
-		System.out.println("Checking for wins...");
 		//Check to see if any players have won.
 		boolean[] wins = new boolean[7];
 		wins[1] = checkTriangle(-1, 4, board, 16, 12);
@@ -115,7 +114,6 @@ public class Server extends JFrame
 				
 				shout("7 " + (player+2)%6+1);
 			}
-		System.out.println("Done checking for wins");
 	}
 
 	public static boolean checkTriangle(int attitude, int player, int[][] board,
@@ -134,7 +132,7 @@ public class Server extends JFrame
 				if (board[attitude > 0 ? row + i : row - i][attitude > 0 ? col
 						+ j
 						: col - j] == player)
-					hasWin = false;
+					hasWin = true;
 			}
 		return win && hasWin;
 	}

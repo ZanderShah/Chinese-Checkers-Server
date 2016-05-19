@@ -8,7 +8,7 @@ import java.net.Socket;
 
 public class Client
 {
-	private static final int TIMEOUT = 15000;
+	private static final int TIMEOUT = 2000;
 	
 	private Socket sock;
 	private InputStream in;
