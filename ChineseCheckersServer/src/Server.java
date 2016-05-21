@@ -25,13 +25,13 @@ public class Server extends JFrame
 		// Create the board
 		display = new Display();
 		
-		noOfPlayers = display.getNoOfPlayers();
-		timeOut = display.getTimeOut();
-		players = display.setUpBoard(noOfPlayers);
 		// Create the server
 		new Server().go();
 	}
 	
+	/**
+	 * Creates a new Server object
+	 */
 	public Server() {
 		super("Chinese Checkers Server");
 		setContentPane(display);
@@ -43,10 +43,16 @@ public class Server extends JFrame
 	}
 
 	/**
-	 * 
+	 * Runs the server
 	 */
 	public void go()
 	{
+		//Fetches information about the players and the game
+		noOfPlayers = display.getNoOfPlayers();
+		timeOut = display.getTimeOut();
+		players = display.setUpBoard(noOfPlayers);
+		
+		//Initializes player connections
 		System.out.println("Waiting for player connections..");
 		Socket client = null;
 		int playersConnected = 0;
@@ -99,6 +105,10 @@ public class Server extends JFrame
 		gameStarted = true;
 	}
 
+	/**
+	 * Checks to see if a player has won. A win occurs when a player's opposite triangle is
+	 * completely filled and at least one of the spots is occupied by a piece of that player.
+	 */
 	public void checkForWin()
 	{
 		//Check to see if any players have won.
@@ -121,6 +131,15 @@ public class Server extends JFrame
 			}
 	}
 
+	/**
+	 * Checks each piece in the triangle to determine whether a win has occurred
+	 * @param attitude whether the triangle is upright or inverted
+	 * @param player the number of the player
+	 * @param board the game board
+	 * @param row the row of the starting position to check
+	 * @param col the col of the starting position to check
+	 * @return whether a win has occurred
+	 */
 	public static boolean checkTriangle(int attitude, int player, int[][] board,
 			int row, int col)
 	{
@@ -142,6 +161,10 @@ public class Server extends JFrame
 		return win && hasWin;
 	}
 	
+	/**
+	 * Sends a command to all players connected to the server
+	 * @param command the message to be sent
+	 */
 	public void shout(String command)
 	{
 		for (Client c : clients)
@@ -150,6 +173,14 @@ public class Server extends JFrame
 		}
 	}
 
+	/**
+	 * Checks to see if a move is valid
+	 * @param row the initial row of the move
+	 * @param col the initial col of the move
+	 * @param goalRow the final row of the move
+	 * @param goalCol the final col of the move
+	 * @return
+	 */
 	static boolean valid(int row, int col, int goalRow, int goalCol)
 	{
 		if (Math.abs(row - goalRow) <= 1 && Math.abs(col - goalCol) <= 1
@@ -159,6 +190,15 @@ public class Server extends JFrame
 		return hop(row, col, goalRow, goalCol, new boolean[17][17]);
 	}
 
+	/**
+	 * Checks to see if a hop is possible from one coordinate to another
+	 * @param row the initial row of the move
+	 * @param col the initial col of the move
+	 * @param goalRow the final row of the move
+	 * @param goalCol the final col of the move
+	 * @param vis the boolean array of visited moves
+	 * @return
+	 */
 	static boolean hop(int row, int col, int goalRow, int goalCol,
 			boolean[][] vis)
 	{
@@ -203,22 +243,38 @@ public class Server extends JFrame
 		return ret;
 	}
 
+	/**
+	 * Checks to see if a coordinate is within a 17 by 17 array
+	 * @param row the row of the coordinate
+	 * @param col the col of the coordinate
+	 * @return whether the coordinate is within the array
+	 */
 	static boolean inBounds(int row, int col)
 	{
 		return row >= 0 && col >= 0 && row < 17 && col < 17;
 	}
 
+	/**
+	 * Keeps track of each player
+	 */
 	class PlayerThread implements Runnable
 	{
 		private Client client;
 		private int colour;
 
+		/**
+		 * Creates a new player
+		 * @param client the Object used to communicate with the player
+		 */
 		PlayerThread(Client client)
 		{
 			this.client = client;
 			colour = client.getColour();
 		}
 
+		/**
+		 * Communicates moves between the player and the server
+		 */
 		public void run()
 		{
 			while (!gameOver)
@@ -226,7 +282,7 @@ public class Server extends JFrame
 				try
 				{
 					// If it is the player's turn and the has has started
-					if (turn == colour && gameStarted)// //////////////////////////////
+					if (players[turn-1] == colour && gameStarted)// //////////////////////////////
 					{
 						// Get the move from the client
 						int[][] move = client.getMove();
@@ -256,7 +312,7 @@ public class Server extends JFrame
 						checkForWin();
 						turn = (turn % noOfPlayers)+1;
 						
-						display.update(board, turn);
+						display.update(board, players[turn-1]);
 						display.repaint();
 					}
 				}

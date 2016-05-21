@@ -17,6 +17,12 @@ public class Client
 	private PrintWriter pw;
 	private int colour;
 
+	/**
+	 * Creates a new player client
+	 * @param socket the player's connection
+	 * @param colour the player's board piece number
+	 * @param timeOut the amount of time allotted for each move
+	 */
 	public Client(Socket socket, int colour, int timeOut)
 	{
 		try
@@ -35,6 +41,10 @@ public class Client
 		}
 	}
 
+	/**
+	 * Returns the colour of the player
+	 * @return the colour
+	 */
 	public int getColour()
 	{
 		return colour;
