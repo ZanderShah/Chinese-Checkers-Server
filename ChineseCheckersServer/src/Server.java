@@ -15,6 +15,8 @@ public class Server extends JFrame
 	private ArrayList<Client> clients;
 	private static boolean gameOver, gameStarted;
 	private int turn;
+	private static int noOfPlayers, timeOut;
+	private static int[] players;
 	private static int[][] board;
 	private static Display display;
 
@@ -22,7 +24,10 @@ public class Server extends JFrame
 	{
 		// Create the board
 		display = new Display();
-
+		
+		noOfPlayers = display.getNoOfPlayers();
+		timeOut = display.getTimeOut();
+		players = display.setUpBoard(noOfPlayers);
 		// Create the server
 		new Server().go();
 	}
@@ -54,14 +59,14 @@ public class Server extends JFrame
 		// Connect players
 		try
 		{
-			serverSocket = new ServerSocket(421);
+			serverSocket = new ServerSocket(420);
 
-			while (playersConnected != 6)// ///////////////////////////////////////////////////////1
+			while (playersConnected != noOfPlayers)
 			{
 				client = serverSocket.accept();
 				playersConnected++;
 				System.out.printf("Client #%d connected!%n", playersConnected);
-				clients.add(new Client(client, playersConnected));
+				clients.add(new Client(client, players[playersConnected-1], timeOut));
 				threads.add(new Thread(new PlayerThread(
 						clients.get(clients.size() - 1))));
 				threads.get(threads.size() - 1).start();
@@ -77,7 +82,7 @@ public class Server extends JFrame
 
 		// Give each player their colour and tell them new game (2 1-6)
 		for (int i = 0; i < playersConnected; i++) {
-			clients.get(i).newGame(i + 1);
+			clients.get(i).newGame(players[i]);
 		}
 
 		for (int i = 0; i < board.length; i++) {
@@ -249,7 +254,7 @@ public class Server extends JFrame
 						}
 
 						checkForWin();
-						turn = (turn % 6)+1;
+						turn = (turn % noOfPlayers)+1;
 						
 						display.update(board, turn);
 						display.repaint();

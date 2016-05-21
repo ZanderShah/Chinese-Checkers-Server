@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class Display extends JPanel {
@@ -29,15 +30,55 @@ public class Display extends JPanel {
 		for (int i = 4; i <= 12; i++)
 			for (int j = 4; j <= 12; j++)
 				board[i][j] = 0;
-
-		fillTriangle(-1, board, 1, 16, 12);
-		fillTriangle(1, board, 2, 9, 13);
-		fillTriangle(-1, board, 3, 7, 12);
-		fillTriangle(1, board, 4, 0, 4);
-		fillTriangle(-1, board, 5, 7, 3);
-		fillTriangle(1, board, 6, 9, 4);
-
+		
+		fillTriangle(-1, board, 0, 16, 12);
+		fillTriangle(1, board, 0, 9, 13);
+		fillTriangle(-1, board, 0, 7, 12);
+		fillTriangle(1, board, 0, 0, 4);
+		fillTriangle(-1, board, 0, 7, 3);
+		fillTriangle(1, board, 0, 9, 4);
+		
 		this.setPreferredSize(SIZE);
+	}
+	
+	public int[] setUpBoard(int noOfPlayers)
+	{
+		switch(noOfPlayers)
+		{
+		case 1:
+			fillTriangle(-1, board, 1, 16, 12);
+			return new int[] {1};
+		case 2:
+			fillTriangle(-1, board, 1, 16, 12);
+			fillTriangle(1, board, 4, 0, 4);
+			return new int[] {1,4};
+		case 3:
+			fillTriangle(1, board, 2, 9, 13);
+			fillTriangle(1, board, 4, 0, 4);
+			fillTriangle(1, board, 6, 9, 4);
+			return new int[] {2,4,6};
+		case 4:
+			fillTriangle(1, board, 2, 9, 13);
+			fillTriangle(-1, board, 3, 7, 12);
+			fillTriangle(-1, board, 5, 7, 3);
+			fillTriangle(1, board, 6, 9, 4);
+			return new int[] {2,3,5,6};
+		case 5:
+			fillTriangle(-1, board, 1, 16, 12);
+			fillTriangle(1, board, 2, 9, 13);
+			fillTriangle(-1, board, 3, 7, 12);
+			fillTriangle(1, board, 4, 0, 4);
+			fillTriangle(-1, board, 5, 7, 3);
+			return new int[] {1,2,3,4,5};
+		default:
+			fillTriangle(-1, board, 1, 16, 12);
+			fillTriangle(1, board, 2, 9, 13);
+			fillTriangle(-1, board, 3, 7, 12);
+			fillTriangle(1, board, 4, 0, 4);
+			fillTriangle(-1, board, 5, 7, 3);
+			fillTriangle(1, board, 6, 9, 4);
+			return new int[] {1,2,3,4,5,6};
+		}
 	}
 
 	public void update(int[][] board, int t) {
@@ -47,6 +88,39 @@ public class Display extends JPanel {
 
 	public int[][] getBoard() {
 		return board;
+	}
+	
+	public int getNoOfPlayers()
+	{
+		String noOfPlayers = JOptionPane.showInputDialog(null, "Please enter the number of players from 1-6", "Number of Players", JOptionPane.INFORMATION_MESSAGE);
+		while(!isNumber(noOfPlayers) || Integer.parseInt(noOfPlayers) < 1 || Integer.parseInt(noOfPlayers) > 6)
+		{
+			if(!isNumber(noOfPlayers))
+				noOfPlayers = JOptionPane.showInputDialog(null, "You must enter a NUMBER. Please re-enter the number of players from 1-6", "NUMBER of Players", JOptionPane.INFORMATION_MESSAGE);
+			else
+				noOfPlayers = JOptionPane.showInputDialog(null, "Please re-enter the number of players from 1-6", "Players must be between 1 and 6", JOptionPane.INFORMATION_MESSAGE);
+		}
+		
+		return Integer.parseInt(noOfPlayers);
+	}
+	
+	public boolean isNumber(String str)
+	{
+		for(int i = 0; i < str.length(); i++)
+		{
+			if(!Character.isDigit(str.charAt(i)))
+				return false;
+		}
+		return true;
+	}
+	
+	public int getTimeOut()
+	{
+		String time = JOptionPane.showInputDialog(null, "Please enter the timeout amount in seconds: ", "Set Timeout", JOptionPane.INFORMATION_MESSAGE);
+		while(!isNumber(time))
+			time = JOptionPane.showInputDialog(null, "You must enter a NUMBER. Please re-enter the timeout time in seconds: ", "Set Timeout", JOptionPane.INFORMATION_MESSAGE);
+		
+		return Integer.parseInt(time);
 	}
 
 	/**

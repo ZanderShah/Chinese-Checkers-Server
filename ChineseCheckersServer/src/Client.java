@@ -8,7 +8,7 @@ import java.net.Socket;
 
 public class Client
 {
-	private static final int TIMEOUT = 2000;
+	private  int timeOut;
 	
 	private Socket sock;
 	private InputStream in;
@@ -17,7 +17,7 @@ public class Client
 	private PrintWriter pw;
 	private int colour;
 
-	public Client(Socket socket, int colour)
+	public Client(Socket socket, int colour, int timeOut)
 	{
 		try
 		{
@@ -27,6 +27,7 @@ public class Client
 			out = sock.getOutputStream();
 			pw = new PrintWriter(out);
 			this.colour = colour;
+			this.timeOut = timeOut * 1000;
 		}
 		catch (IOException e)
 		{
@@ -80,7 +81,7 @@ public class Client
 		t.start();
 
 		// Query for a move every 10ms until the timeout is reached or the move is recieved
-		while (m.getMove() == null && System.currentTimeMillis() - start < TIMEOUT) {
+		while (m.getMove() == null && System.currentTimeMillis() - start < timeOut) {
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {

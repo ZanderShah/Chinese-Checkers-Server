@@ -14,6 +14,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class PlayerClient extends JFrame {
@@ -71,7 +72,9 @@ public class PlayerClient extends JFrame {
 			fillTriangle(-1, board, 0, 7, 3);
 			
 			try {
-				sock = new Socket("localhost", 420);
+				String ip = JOptionPane.showInputDialog(null, "Please enter the server's IP address: ", "Enter IP Address", JOptionPane.INFORMATION_MESSAGE);
+				int port = Integer.parseInt(JOptionPane.showInputDialog(null, "Please enter the server's port number: ", "Enter Port", JOptionPane.INFORMATION_MESSAGE));
+				sock = new Socket(ip, port);
 				br = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 				pw = new PrintWriter(sock.getOutputStream());
 			} catch (UnknownHostException e) {
