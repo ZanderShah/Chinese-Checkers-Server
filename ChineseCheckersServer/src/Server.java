@@ -281,6 +281,9 @@ public class Server extends JFrame
 			{
 				try
 				{
+					//Be nice to the JVM
+					Thread.sleep(10);
+					
 					// If it is the player's turn and the has has started
 					if (players[turn-1] == colour && gameStarted)// //////////////////////////////
 					{
