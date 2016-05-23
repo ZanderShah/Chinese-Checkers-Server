@@ -87,7 +87,7 @@ public class Client
 		}
 
 		long start = System.currentTimeMillis();
-		MoveThread m = new MoveThread(br, colour);
+		MoveThread m = new MoveThread();
 		Thread t = new Thread(m);
 
 		t.start();
@@ -150,14 +150,10 @@ public class Client
 		private boolean timeout = false;
 		private int[][] move;
 		private boolean moveReceived = false;
-		// private BufferedReader in;
-		int colour;
 
-		public MoveThread(BufferedReader in, int c)
+		public MoveThread()
 		{
 			move = new int[2][2];
-			// this.in = in;
-			colour = c;
 			move[0][0] = -1;
 			move[0][1] = -1;
 			move[1][0] = -1;
