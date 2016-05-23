@@ -194,8 +194,11 @@ public class Server extends JFrame
 		if (Math.abs(row - goalRow) <= 1 && Math.abs(col - goalCol) <= 1
 				&& row - goalRow != -(col - goalCol))
 			return true;
-
-		return hop(row, col, goalRow, goalCol, new boolean[17][17]);
+		System.out.println("Cannot move directly, trying to hop");
+		if (hop(row, col, goalRow, goalCol, new boolean[17][17]))
+			return true;
+		System.out.println("Cannot hop");
+		return false;
 	}
 
 	/**
@@ -259,7 +262,10 @@ public class Server extends JFrame
 	 */
 	static boolean inBounds(int row, int col)
 	{
-		return row >= 0 && col >= 0 && row < 17 && col < 17;
+		if (row >= 0 && col >= 0 && row < board.length && col < board[0].length)
+			return true;
+		System.out.println("Move out of bounds");
+		return false;
 	}
 
 	/**
