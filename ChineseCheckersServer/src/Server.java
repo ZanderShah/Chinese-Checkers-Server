@@ -8,7 +8,7 @@ import javax.swing.JFrame;
 public class Server extends JFrame
 {
 	private static final boolean SINGLE_TEST = false;
-	
+
 	// Initialize variables
 	private ServerSocket serverSocket;
 	private ArrayList<Thread> threads;
@@ -24,15 +24,16 @@ public class Server extends JFrame
 	{
 		// Create the board
 		display = new Display();
-		
+
 		// Create the server
 		new Server().go();
 	}
-	
+
 	/**
 	 * Creates a new Server object
 	 */
-	public Server() {
+	public Server()
+	{
 		super("Chinese Checkers Server");
 		setContentPane(display);
 		setResizable(false);
@@ -47,12 +48,12 @@ public class Server extends JFrame
 	 */
 	public void go()
 	{
-		//Fetches information about the players and the game
+		// Fetches information about the players and the game
 		noOfPlayers = display.getNoOfPlayers();
 		timeOut = display.getTimeOut();
 		players = display.setUpBoard(noOfPlayers);
-		
-		//Initializes player connections
+
+		// Initializes player connections
 		System.out.println("Waiting for player connections..");
 		Socket client = null;
 		int playersConnected = 0;
@@ -72,7 +73,8 @@ public class Server extends JFrame
 				client = serverSocket.accept();
 				playersConnected++;
 				System.out.printf("Client #%d connected!%n", playersConnected);
-				clients.add(new Client(client, players[playersConnected-1], timeOut));
+				clients.add(new Client(client, players[playersConnected - 1],
+						timeOut));
 				threads.add(new Thread(new PlayerThread(
 						clients.get(clients.size() - 1))));
 				threads.get(threads.size() - 1).start();
@@ -87,16 +89,20 @@ public class Server extends JFrame
 		System.out.println("All clients connected :)");
 
 		// Give each player their colour and tell them new game (2 1-6)
-		for (int i = 0; i < playersConnected; i++) {
+		for (int i = 0; i < playersConnected; i++)
+		{
 			clients.get(i).newGame(players[i]);
 		}
 
-		for (int i = 0; i < board.length; i++) {
-			for (int j = 0; j < board[0].length; j++) {
+		for (int i = 0; i < board.length; i++)
+		{
+			for (int j = 0; j < board[0].length; j++)
+			{
 				// If the location has a player piece
-				if (board[i][j] != 0 && board[i][j] != -1) {
-					//Tells everyone to place pieces
-					//3 (colour) (row) (col)
+				if (board[i][j] != 0 && board[i][j] != -1)
+				{
+					// Tells everyone to place pieces
+					// 3 (colour) (row) (col)
 					shout("3 " + board[i][j] + " " + i + " " + j);
 				}
 			}
@@ -106,12 +112,13 @@ public class Server extends JFrame
 	}
 
 	/**
-	 * Checks to see if a player has won. A win occurs when a player's opposite triangle is
-	 * completely filled and at least one of the spots is occupied by a piece of that player.
+	 * Checks to see if a player has won. A win occurs when a player's opposite
+	 * triangle is completely filled and at least one of the spots is occupied
+	 * by a piece of that player.
 	 */
 	public void checkForWin()
 	{
-		//Check to see if any players have won.
+		// Check to see if any players have won.
 		boolean[] wins = new boolean[7];
 		wins[1] = checkTriangle(-1, 4, board, 16, 12);
 		wins[2] = checkTriangle(1, 5, board, 9, 13);
@@ -119,15 +126,15 @@ public class Server extends JFrame
 		wins[4] = checkTriangle(1, 1, board, 0, 4);
 		wins[5] = checkTriangle(-1, 2, board, 7, 3);
 		wins[6] = checkTriangle(1, 3, board, 9, 4);
-		
-		for(int player = 1; player <= 6; player++)
-			if(wins[player])
+
+		for (int player = 1; player <= 6; player++)
+			if (wins[player])
 			{
 				gameOver = true;
 				gameStarted = false;
-				System.out.printf("Player %d has won!", (player+2)%6+1);
-				
-				shout("7 " + (player+2)%6+1);
+				System.out.printf("Player %d has won!", (player + 2) % 6 + 1);
+
+				shout("7 " + (player + 2) % 6 + 1);
 			}
 	}
 
@@ -140,7 +147,8 @@ public class Server extends JFrame
 	 * @param col the col of the starting position to check
 	 * @return whether a win has occurred
 	 */
-	public static boolean checkTriangle(int attitude, int player, int[][] board,
+	public static boolean checkTriangle(int attitude, int player,
+			int[][] board,
 			int row, int col)
 	{
 		boolean win = true;
@@ -160,7 +168,7 @@ public class Server extends JFrame
 			}
 		return win && hasWin;
 	}
-	
+
 	/**
 	 * Sends a command to all players connected to the server
 	 * @param command the message to be sent
@@ -281,11 +289,11 @@ public class Server extends JFrame
 			{
 				try
 				{
-					//Be nice to the JVM
+					// Be nice to the JVM
 					Thread.sleep(10);
-					
+
 					// If it is the player's turn and the has has started
-					if (players[turn-1] == colour && gameStarted)// //////////////////////////////
+					if (players[turn - 1] == colour && gameStarted)// //////////////////////////////
 					{
 						// Get the move from the client
 						int[][] move = client.getMove();
@@ -303,19 +311,23 @@ public class Server extends JFrame
 											move[1][1]))
 							{
 								client.invalidMove();
-								System.out.printf("Move from player %d was invalid!%n", colour);
+								System.out.printf(
+										"Move from player %d was invalid!%n",
+										colour);
 							}
-							else {
-								shout("1 " + move[0][0] + " " + move[0][1] + " " + move[1][0] + " " + move[1][1]);
+							else
+							{
+								shout("1 " + move[0][0] + " " + move[0][1]
+										+ " " + move[1][0] + " " + move[1][1]);
 								board[move[0][0]][move[0][1]] = 0;
 								board[move[1][0]][move[1][1]] = colour;
 							}
 						}
 
 						checkForWin();
-						turn = (turn % noOfPlayers)+1;
-						
-						display.update(board, players[turn-1]);
+						turn = (turn % noOfPlayers) + 1;
+
+						display.update(board, players[turn - 1]);
 						display.repaint();
 					}
 				}

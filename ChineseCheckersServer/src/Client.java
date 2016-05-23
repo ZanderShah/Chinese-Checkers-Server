@@ -8,8 +8,8 @@ import java.net.Socket;
 
 public class Client
 {
-	private  int timeOut;
-	
+	private int timeOut;
+
 	private Socket sock;
 	private InputStream in;
 	private BufferedReader br;
@@ -74,7 +74,9 @@ public class Client
 	{
 		try
 		{
-			while (br.ready()) br.readLine();
+			while (br.ready())
+				System.out.println("Dumping: " + br.readLine());
+
 			System.out.printf("Player %d queried for move%n", colour);
 			pw.println("4");
 			pw.flush();
@@ -83,22 +85,28 @@ public class Client
 		{
 			e.printStackTrace();
 		}
-		
+
 		long start = System.currentTimeMillis();
 		MoveThread m = new MoveThread(br, colour);
 		Thread t = new Thread(m);
 
 		t.start();
 
-		// Query for a move every 10ms until the timeout is reached or the move is recieved
-		while (m.getMove() == null && System.currentTimeMillis() - start < timeOut) {
-			try {
+		// Query for a move every 10ms until the timeout is reached or the move
+		// is received
+		while (m.getMove() == null
+				&& System.currentTimeMillis() - start < timeOut)
+		{
+			try
+			{
 				Thread.sleep(10);
-			} catch (InterruptedException e) {
+			}
+			catch (InterruptedException e)
+			{
 				e.printStackTrace();
 			}
 		}
-		
+
 		m.timeout();
 
 		int[][] move = m.getMove();
@@ -106,7 +114,8 @@ public class Client
 		// Tell a player of timeout
 		if (move == null)
 		{
-			System.out.printf("Player %d timed out while choosing a move%n", colour);
+			System.out.printf("Player %d timed out while choosing a move%n",
+					colour);
 			pw.println("6");
 			pw.flush();
 		}
@@ -114,87 +123,98 @@ public class Client
 		return move;
 	}
 
-	public void invalidMove() {
+	public void invalidMove()
+	{
 		pw.println("5");
 		pw.flush();
 	}
-	
-	public void sendCommand(String command) {
+
+	public void sendCommand(String command)
+	{
 		pw.println(command);
 		pw.flush();
 	}
 
 	public void sendMove(int[][] m)
 	{
-		sendCommand("1 " + m[0][0] + " " + m[0][1] + " " + m[1][0] + " " + m[1][1]);
-	}
-}
-
-/**
- * Thread for receiving a move from the client. Can be timed out if the player
- * takes too long.
- */
-class MoveThread implements Runnable
-{
-	private boolean timeout = false;
-	private int[][] move;
-	private boolean moveReceived = false;
-	private BufferedReader in;
-	int colour;
-
-	public MoveThread(BufferedReader in, int c)
-	{
-		move = new int[2][2];
-		this.in = in;
-		colour = c;
-		move[0][0] = -1;
-		move[0][1] = -1;
-		move[1][0] = -1;
-		move[1][1] = -1;
+		sendCommand("1 " + m[0][0] + " " + m[0][1] + " " + m[1][0] + " "
+				+ m[1][1]);
 	}
 
-	public void run()
+	/**
+	 * Thread for receiving a move from the client. Can be timed out if the
+	 * player takes too long.
+	 */
+	class MoveThread implements Runnable
 	{
-		try
+		private boolean timeout = false;
+		private int[][] move;
+		private boolean moveReceived = false;
+		// private BufferedReader in;
+		int colour;
+
+		public MoveThread(BufferedReader in, int c)
 		{
-			while (!in.ready() && !timeout){};
-			if (!timeout)
+			move = new int[2][2];
+			// this.in = in;
+			colour = c;
+			move[0][0] = -1;
+			move[0][1] = -1;
+			move[1][0] = -1;
+			move[1][1] = -1;
+		}
+
+		public void run()
+		{
+			try
 			{
-				//If the first number is 1 (indicating a player wants to move)
-				String[] command = in.readLine().split(" ");
-				if (Integer.parseInt(command[0]) == 1)
+				while (!br.ready() && !timeout)
 				{
-					move[0][0] = Integer.parseInt(command[1]);
-					move[0][1] = Integer.parseInt(command[2]);
-					move[1][0] = Integer.parseInt(command[3]);
-					move[1][1] = Integer.parseInt(command[4]);
-					moveReceived = true;
-					System.out.printf("Move recieved from player %d: [%d %d] -> [%d %d]%n",
-									colour, move[0][0], move[0][1], move[1][0], move[1][1]);
+				}
+				;
+
+				if (!timeout)
+				{
+					// If the first number is 1 (indicating a player wants to
+					// move)
+					String[] command = br.readLine().split(" ");
+					if (Integer.parseInt(command[0]) == 1)
+					{
+						move[0][0] = Integer.parseInt(command[1]);
+						move[0][1] = Integer.parseInt(command[2]);
+						move[1][0] = Integer.parseInt(command[3]);
+						move[1][1] = Integer.parseInt(command[4]);
+						moveReceived = true;
+						System.out
+								.printf("Move recieved from player %d: [%d %d] -> [%d %d]%n",
+										colour, move[0][0], move[0][1],
+										move[1][0],
+										move[1][1]);
+					}
 				}
 			}
-		}
-		catch (Exception e)
-		{
+			catch (Exception e)
+			{
 
+			}
 		}
-	}
 
-	public boolean timeout()
-	{
-		timeout = true;
-		return moveReceived;
-	}
-
-	public int[][] getMove()
-	{
-		if (moveReceived)
+		public boolean timeout()
 		{
-			return move;
+			timeout = true;
+			return moveReceived;
 		}
-		else
+
+		public int[][] getMove()
 		{
-			return null;
+			if (moveReceived)
+			{
+				return move;
+			}
+			else
+			{
+				return null;
+			}
 		}
 	}
 }
