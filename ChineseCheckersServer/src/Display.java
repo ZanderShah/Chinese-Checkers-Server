@@ -159,10 +159,10 @@ public class Display extends JPanel {
 	 */
 	public int getTimeOut()
 	{
-		String time = JOptionPane.showInputDialog(null, "Please enter the timeout amount in seconds: ", "Set Timeout", JOptionPane.INFORMATION_MESSAGE);
+		String time = JOptionPane.showInputDialog(null, "Please enter the timeout amount in milliseconds: ", "Set Timeout", JOptionPane.INFORMATION_MESSAGE);
 		//Check to see if the entry was invalid
 		while(!isNumber(time))
-			time = JOptionPane.showInputDialog(null, "You must enter a NUMBER. Please re-enter the timeout time in seconds: ", "Set Timeout", JOptionPane.INFORMATION_MESSAGE);
+			time = JOptionPane.showInputDialog(null, "You must enter a NUMBER. Please re-enter the timeout time in milliseconds: ", "Set Timeout", JOptionPane.INFORMATION_MESSAGE);
 		
 		return Integer.parseInt(time);
 	}

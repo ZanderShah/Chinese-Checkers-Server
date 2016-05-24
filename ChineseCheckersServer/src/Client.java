@@ -33,7 +33,7 @@ public class Client
 			out = sock.getOutputStream();
 			pw = new PrintWriter(out);
 			this.colour = colour;
-			this.timeOut = timeOut * 1000;
+			this.timeOut = timeOut;
 		}
 		catch (IOException e)
 		{
