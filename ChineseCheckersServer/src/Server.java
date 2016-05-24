@@ -62,7 +62,7 @@ public class Server extends JFrame
 		clients = new ArrayList<Client>();
 		gameOver = false;
 		board = display.getBoard();
-
+		
 		// Connect players
 		try
 		{
@@ -87,7 +87,7 @@ public class Server extends JFrame
 		}
 
 		System.out.println("All clients connected :)");
-
+		
 		// Give each player their colour and tell them new game (2 1-6)
 		for (int i = 0; i < playersConnected; i++)
 		{
@@ -108,6 +108,7 @@ public class Server extends JFrame
 			}
 		}
 
+		display.update(board, players[turn-1]);
 		gameStarted = true;
 	}
 
@@ -331,8 +332,14 @@ public class Server extends JFrame
 						}
 
 						checkForWin();
+						
+						if(players[0] == colour)
+							display.addTurn();
+						
 						turn = (turn % noOfPlayers) + 1;
-
+						
+						
+						
 						display.update(board, players[turn - 1]);
 						display.repaint();
 					}

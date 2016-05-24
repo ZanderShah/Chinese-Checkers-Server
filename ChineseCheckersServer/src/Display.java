@@ -10,7 +10,7 @@ import javax.swing.JPanel;
 
 public class Display extends JPanel {
 	private int[][] board;
-	private int turn;
+	private int turn, totalTurn = 0;
 	private final Dimension SIZE = new Dimension(1024, 768);
 	private final int SPACE = 50;
 	private final int DIAMETER = 40;
@@ -42,6 +42,12 @@ public class Display extends JPanel {
 		fillTriangle(1, board, 0, 9, 4);
 		
 		this.setPreferredSize(SIZE);
+	}
+	
+	public void addTurn()
+	{
+		totalTurn++;
+		repaint(0);
 	}
 	
 	/**
@@ -202,6 +208,7 @@ public class Display extends JPanel {
 		g.setColor(Color.BLACK);
 		g.setFont(g.getFont().deriveFont(Font.PLAIN, 32));
 		g.drawString("Current player: " + (turn), 5, 36);
+		g.drawString("Total Turns: " + (totalTurn), 5, 76);
 	}
 
 	/**
