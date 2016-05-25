@@ -81,13 +81,9 @@ public class PlayerClient extends JFrame {
 			
 			//Connects to the server
 			try {
-<<<<<<< HEAD
-				sock = new Socket("10.242.165.156", 421);
-=======
 				String ip = JOptionPane.showInputDialog(null, "Please enter the server's IP address: ", "Enter IP Address", JOptionPane.INFORMATION_MESSAGE);
 				int port = Integer.parseInt(JOptionPane.showInputDialog(null, "Please enter the server's port number: ", "Enter Port", JOptionPane.INFORMATION_MESSAGE));
 				sock = new Socket(ip, port);
->>>>>>> branch 'master' of https://github.com/CallumMoseley/chinese-checkers-server
 				br = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 				pw = new PrintWriter(sock.getOutputStream());
 			} catch (UnknownHostException e) {
