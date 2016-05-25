@@ -14,12 +14,16 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class PlayerClient extends JFrame {
 	
 	private static GamePanel game;
 	
+	/**
+	 * Creates a new PlayerClient object
+	 */
 	public PlayerClient() {
 		super("Chinese Checkers Player Client");
 		game = new GamePanel();
@@ -36,6 +40,7 @@ public class PlayerClient extends JFrame {
 	
 	static class GamePanel extends JPanel implements MouseListener {
 		
+		//Final variables for drawing the board
 		private static final int SPACE = 50;
 		private static final int DIAMETER = 40;
 		private static final int BORDER = 2;
@@ -44,21 +49,25 @@ public class PlayerClient extends JFrame {
 		
 		private static final Color[] PLAYERS = {Color.BLACK, Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.BLUE, Color.MAGENTA.darker()};
 
+		private static int colour, winner = 0, time;
+		private static int[] selectedCoord;
 		private static int[][] board;
 		private static int[][][] boardCoords;
-		private static int colour;
-		private static boolean turn;
-		private static int[] selectedCoord;
-		private static boolean selected;
+		private static boolean turn, showTime = false, selected, invalid, timedOut;
 
 		private static Socket sock;
 		private static BufferedReader br;
 		private static PrintWriter pw;
 		
+		/**
+		 * Creates a new GamePanel
+		 */
 		public GamePanel() {
 			board = new int[17][17];
 			boardCoords = new int[17][17][2];
 			colour = 0;
+			
+			//Fills the board with invalid and available spaces
 			for (int i = 0; i < 17; i++)
 				for (int j = 0; j < 17; j++)
 					board[i][j] = -1;
@@ -70,8 +79,15 @@ public class PlayerClient extends JFrame {
 			fillTriangle(1, board, 0, 0, 4);
 			fillTriangle(-1, board, 0, 7, 3);
 			
+			//Connects to the server
 			try {
+<<<<<<< HEAD
 				sock = new Socket("10.242.165.156", 421);
+=======
+				String ip = JOptionPane.showInputDialog(null, "Please enter the server's IP address: ", "Enter IP Address", JOptionPane.INFORMATION_MESSAGE);
+				int port = Integer.parseInt(JOptionPane.showInputDialog(null, "Please enter the server's port number: ", "Enter Port", JOptionPane.INFORMATION_MESSAGE));
+				sock = new Socket(ip, port);
+>>>>>>> branch 'master' of https://github.com/CallumMoseley/chinese-checkers-server
 				br = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 				pw = new PrintWriter(sock.getOutputStream());
 			} catch (UnknownHostException e) {
@@ -80,6 +96,7 @@ public class PlayerClient extends JFrame {
 				e.printStackTrace();
 			}
 			
+			//Begin game
 			new Thread(new ServerThread()).start();
 			
 			setPreferredSize(new Dimension(1024, 768));
@@ -91,6 +108,8 @@ public class PlayerClient extends JFrame {
 			((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g.setColor(Color.WHITE);
 			g.clearRect(0, 0, getWidth(), getHeight());
+			
+			//Drawns the board
 			for (int i = 0; i < 17; i++) {
 				for (int j = 0; j < 17; j++) {
 					if (board[i][j] != -1) {
@@ -118,6 +137,7 @@ public class PlayerClient extends JFrame {
 							g.setColor(Color.MAGENTA.darker());
 						}
 						
+						//Draw a selected piece darker than the other pieces
 						if (selected && selectedCoord[0] == i && selectedCoord[1] == j) {
 							Color c = g.getColor();
 							Color n = c.darker();
@@ -128,6 +148,7 @@ public class PlayerClient extends JFrame {
 				}
 			}
 			
+			//Draw the player's colour
 			g.setColor(PLAYERS[colour]);
 			g.setFont(g.getFont().deriveFont(Font.PLAIN, 24));
 			if (colour > 0) {
@@ -136,8 +157,26 @@ public class PlayerClient extends JFrame {
 				g.drawString("You have not yet been assigned a colour", 5, 36);
 			}
 			g.setColor(Color.BLACK);
+			
+			//Information messages
 			if (turn) {
-				g.drawString("It is your turn", 5, 56);
+				g.drawString("It is your turn", 5, 60);
+			}
+			if(showTime)
+			{
+				g.drawString("Time: " + time, 170, 60);
+			}
+			if(invalid)
+			{
+				g.drawString("You have made an invalid move", 5, 80);
+			}
+			if(timedOut)
+			{
+				g.drawString("You have timed out", 5, 100);
+			}
+			if(winner != 0)
+			{
+				g.drawString("Player " + winner + " has won!", 5, 120);
 			}
 		}
 		
@@ -158,11 +197,39 @@ public class PlayerClient extends JFrame {
 			}
 		}
 		
+		/**
+		 * Keeps track of the time elapsed since a player's turn began
+		 */
+		class TimerThread implements Runnable {
+			public void run()
+			{
+				long start= System.currentTimeMillis();
+				while(true)
+				{
+					//Do not run the timer if it is not the player's turn
+					if(turn == false)
+						start = System.currentTimeMillis();
+					//Keep track of the time elapsed in seconds
+					else
+					{
+						time = (int)((System.currentTimeMillis() - start)/1000);
+						GamePanel.this.repaint(0);
+					}
+				}
+			}
+		}
+		
+		/**
+		 * Keeps track of the server's input
+		 */
 		class ServerThread implements Runnable {
 			
 			@Override
 			public void run() {
+				//Initialize the timer
+				new Thread(new TimerThread()).start();
 				while (true) {
+					//Read in the server's command (if any)
 					String[] command = null;
 					try {
 						command = br.readLine().split(" ");
@@ -171,7 +238,9 @@ public class PlayerClient extends JFrame {
 					}
 					
 					switch (Integer.parseInt(command[0])) {
+					//Sent move
 					case 1:
+						showTime = false;
 						int[][] move = new int[2][2];
 						move[0][0] = Integer.parseInt(command[1]);
 						move[0][1] = Integer.parseInt(command[2]);
@@ -182,10 +251,12 @@ public class PlayerClient extends JFrame {
 						board[move[0][0]][move[0][1]] = 0;
 						GamePanel.this.repaint(0);
 						break;
+					//New game
 					case 2:
 						colour = Integer.parseInt(command[1]);
 						GamePanel.this.repaint(0);
 						break;
+					//Place piece
 					case 3:
 						int col = Integer.parseInt(command[1]);
 						int r = Integer.parseInt(command[2]);
@@ -193,20 +264,33 @@ public class PlayerClient extends JFrame {
 						board[r][c] = col;
 						GamePanel.this.repaint(0);
 						break;
+					//Player's turn
 					case 4:
 						turn = true;
+						showTime = true;
+						invalid = false;
+						timedOut = false;
 						GamePanel.this.repaint(0);
 						break;
+					//Invalid move
 					case 5:
 						turn = false;
-						System.out.println("Invalid move");
+						showTime = false;
+						invalid = true;
+						GamePanel.this.repaint(0);
 						break;
+					//Timed out
 					case 6:
 						turn = false;
-						System.out.println("Timed out");
+						showTime = false;
+						timedOut = true;
+						selected = false;
+						GamePanel.this.repaint(0);
 						break;
+					//A player wins
 					case 7:
-						System.out.printf("Player %d won%n", Integer.parseInt(command[1]));
+						winner = Integer.parseInt(command[1]);
+						GamePanel.this.repaint(0);
 						break;
 					}
 				}
