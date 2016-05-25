@@ -71,7 +71,7 @@ public class PlayerClient extends JFrame {
 			fillTriangle(-1, board, 0, 7, 3);
 			
 			try {
-				sock = new Socket("localhost", 420);
+				sock = new Socket("10.242.165.156", 421);
 				br = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 				pw = new PrintWriter(sock.getOutputStream());
 			} catch (UnknownHostException e) {
