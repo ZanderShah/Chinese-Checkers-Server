@@ -135,7 +135,7 @@ public class Server extends JFrame
 				gameStarted = false;
 				
 				System.out.printf("Player %d has won!", (player+2)%6+1);
-				System.out.printf("Player %d has won!", (player + 2) % 6 + 1);
+				shout("7 " + ((player + 2) % 6 + 1));
 			}
 	}
 
