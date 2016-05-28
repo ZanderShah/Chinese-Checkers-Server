@@ -1,4 +1,4 @@
 Chinese Checkers Server
 =======================
 
-Server built for ICS4UE in the Software Engineering project. 
+Server built for the Software Engineering unit in ICS4UE
